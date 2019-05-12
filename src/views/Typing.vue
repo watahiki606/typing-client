@@ -55,6 +55,7 @@
           <code v-show="!gameEndFlag">
             <span
               v-for="(obj, index) in mappedKeyCodeElement"
+              v-bind:key="index"
               v-bind:class="{active:index === cnt,return:obj.char === returnChar,typed:index <= cnt - 1 }"
             >{{obj.char}}</span>
           </code>

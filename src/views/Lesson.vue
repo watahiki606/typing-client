@@ -11,7 +11,7 @@
             <span>lesson name</span>
           </el-col>
           <el-col :span="12">
-            <el-input placeholder="New Name..." clearable></el-input>
+            <el-input v-model="lessonName" placeholder="New Name..." clearable></el-input>
           </el-col>
         </el-row>
         <el-row class="row-wrapper">
@@ -20,6 +20,7 @@
           </el-col>
           <el-col :span="12">
             <el-input
+              v-model="sourceCode"
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="New code..."
@@ -41,7 +42,6 @@
         </div>
 
         <el-table :data="lessons" style="width: 100%">
-          <el-table-column prop="lessonId" label="lessonID" width="200" align="left"/>
           <el-table-column prop="lessonName" label="lessonName" width="200" align="left"/>
           <el-table-column prop="sourceCode" label="souce code" width="200" align="left"/>
           <el-table-column prop="operation" label width="200" align="left">
@@ -66,11 +66,8 @@
 
 <script>
 /* eslint-disable no-console */
-import axios from "axios";
 import SubHeader from "../components/SubHeader.vue";
 import firebase from "firebase";
-
-const database = firebase.database();
 
 export default {
   name: "Lesson",
@@ -78,7 +75,7 @@ export default {
   data() {
     return {
       lessons: [],
-
+      database: firebase.database(),
       lessonId: undefined,
       lessonName: undefined,
       sourceCode: undefined
@@ -89,44 +86,43 @@ export default {
   },
   methods: {
     refresh: function() {
-      let lessonArray = [];
       let _this = this;
-      database.ref("lessons").on("value", snapshot =>
+      this.database.ref("lessons").on("value", snapshot => {
+        this.lessons = [];
         Object.keys(snapshot.val()).forEach(function(key) {
-          lessonArray[lessonArray.length] = {
-            //aa
+          _this.lessons.push({
             lessonId: key,
             lessonName: snapshot.val()[key].lessonName,
             sourceCode: snapshot.val()[key].sourceCode
-          };
-          _this.lessons = lessonArray;
-        })
-      );
-    },
-    addLesson: function() {
-      // await axios.post("http://localhost:8080/", this.request);
-      // await this.refresh();
-      // this.$message({
-      //   showClose: true,
-      //   message: "Add Lesson Success!",
-      //   type: "success"
-      // });
-      database.ref("lessons").push({
-        //aa
-        lessonName: this.request.lessonName,
-        sourceCode: this.request.sourceCode
+          });
+        });
       });
     },
-    deleteLesson: async function(lessonId) {
-      await axios.delete("http://localhost:8080/" + lessonId);
-      await this.refresh();
+    addLesson: function() {
+      this.database.ref("lessons").push({
+        lessonName: this.lessonName,
+        sourceCode: this.sourceCode
+      });
+      this.$message({
+        showClose: true,
+        message: "Add Lesson Success!",
+        type: "success"
+      });
+      this.lessonName = undefined;
+      this.sourceCode = undefined;
+    },
+    deleteLesson: function(lessonId) {
+      this.database
+        .ref("lessons")
+        .child(lessonId)
+        .remove();
       this.$message({
         showClose: true,
         message: "Delete Code Success!",
         type: "success"
       });
     },
-    startLesson: async function(lessonName, sourceCode) {
+    startLesson: function(lessonName, sourceCode) {
       // 問題文をローカルに保存してゲームスタート
       localStorage.setItem("lessonName", lessonName);
       localStorage.setItem("sourceCode", sourceCode);
