@@ -1,18 +1,16 @@
 <template>
   <el-container id="app">
-
     <el-header id="nav">
-      
       <global-header/>
     </el-header>
     <el-main>
       <router-view/>
-          <adsense
-      ad-client="ca-pub-3786393697724703"
-      ad-slot="3921778694"
-      ad-style="display:block"
-      ad-format="auto"
-    ></adsense>
+      <adsense
+        ad-client="ca-pub-3786393697724703"
+        ad-slot="3921778694"
+        ad-style="display:block"
+        ad-format="auto"
+      ></adsense>
     </el-main>
   </el-container>
 </template>
