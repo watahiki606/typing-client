@@ -8,10 +8,10 @@
         </div>
         <el-row class="row-wrapper">
           <el-col :span="12">
-            <span>lesson name</span>
+            <span>language</span>
           </el-col>
           <el-col :span="12">
-            <el-input v-model="lessonName" placeholder="New Name..." clearable></el-input>
+            <el-input v-model="language" placeholder="language..." clearable></el-input>
           </el-col>
         </el-row>
         <el-row class="row-wrapper">
@@ -42,19 +42,19 @@
         </div>
 
         <el-table :data="lessons" style="width: 100%">
-          <el-table-column prop="lessonName" label="lessonName" width="200" align="left"/>
-          <el-table-column prop="sourceCode" label="souce code" width="200" align="left"/>
-          <el-table-column prop="operation" label width="200" align="left">
-            <template slot-scope="scope">
-              <el-button size="mini" type="danger" @click="deleteLesson(scope.row.lessonId)">×</el-button>
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <pre v-highlightjs><code>{{props.row.sourceCode}}</code></pre>
             </template>
           </el-table-column>
-          <el-table-column prop="operation" label width="200" align="left">
+          <el-table-column prop="language" label="language"></el-table-column>
+          <el-table-column prop="operation" align="right">
             <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="deleteLesson(scope.row.lessonId)">×</el-button>
               <el-button
-                size="medium"
+                size="mini"
                 type="primary"
-                @click="startLesson(scope.row.lessonName,scope.row.sourceCode)"
+                @click="startLesson(scope.row.language,scope.row.sourceCode)"
               >lesson</el-button>
             </template>
           </el-table-column>
@@ -68,7 +68,7 @@
 /* eslint-disable no-console */
 import SubHeader from "../components/SubHeader.vue";
 import firebase from "firebase";
-
+const prettyPrint = require("code-prettify");
 export default {
   name: "Lesson",
   components: { SubHeader },
@@ -77,12 +77,18 @@ export default {
       lessons: [],
       database: firebase.database(),
       lessonId: undefined,
-      lessonName: undefined,
+      language: undefined,
       sourceCode: undefined
     };
   },
   created() {
     this.refresh();
+  },
+  mounted() {
+    var vm = this;
+    this.$nextTick(function() {
+      prettyPrint.prettyPrint();
+    });
   },
   methods: {
     refresh: function() {
@@ -92,39 +98,59 @@ export default {
         Object.keys(snapshot.val()).forEach(function(key) {
           _this.lessons.push({
             lessonId: key,
-            lessonName: snapshot.val()[key].lessonName,
+            language: snapshot.val()[key].lessonName,
             sourceCode: snapshot.val()[key].sourceCode
           });
         });
       });
     },
     addLesson: function() {
-      this.database.ref("lessons").push({
-        lessonName: this.lessonName,
-        sourceCode: this.sourceCode
-      });
+      try {
+        this.database.ref("lessons").push({
+          language: this.language,
+          sourceCode: this.sourceCode
+        });
+      } catch {
+        this.$message({
+          showClose: true,
+          message: "Add Lesson Failure!",
+          type: "error"
+        });
+        return;
+      }
       this.$message({
         showClose: true,
         message: "Add Lesson Success!",
         type: "success"
       });
-      this.lessonName = undefined;
+      this.language = undefined;
       this.sourceCode = undefined;
     },
     deleteLesson: function(lessonId) {
+      let _this = this;
       this.database
         .ref("lessons")
         .child(lessonId)
-        .remove();
-      this.$message({
-        showClose: true,
-        message: "Delete Code Success!",
-        type: "success"
-      });
+        .remove(function(error) {
+          if (error) {
+            _this.$message({
+              showClose: true,
+              message: "Delete Lesson Failure!",
+              type: "error"
+            });
+          } else {
+            _this.$message({
+              showClose: true,
+              message: "Delete Lesson Success!",
+              type: "success"
+            });
+          }
+        });
     },
-    startLesson: function(lessonName, sourceCode) {
+
+    startLesson: function(language, sourceCode) {
       // 問題文をローカルに保存してゲームスタート
-      localStorage.setItem("lessonName", lessonName);
+      localStorage.setItem("language", language);
       localStorage.setItem("sourceCode", sourceCode);
       this.$router.push("/typing");
     }

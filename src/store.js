@@ -104,15 +104,15 @@ export default new Vuex.Store({
       "(": { id: "", char: "(", keycode: 57, shiftCode: 1 }
     },
     mappedKeyCodeElement: [],
-    lessonName: ""
+    language: ""
   },
 
   mutations: {
     setSourceCode(state) {
       // 問題文をクリア
       state.mappedKeyCodeElement = [];
-      state.lessonName = "";
-      state.lessonName = localStorage.getItem("lessonName");
+      state.language = "";
+      state.language = localStorage.getItem("language");
       // 選択されたソースコードを変換
       let sourceCode = localStorage
         .getItem("sourceCode")

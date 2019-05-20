@@ -8,36 +8,36 @@ let router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
-    {
-      path: "/lesson",
-      name: "lesson",
-      component: () =>
-        import(/* webpackChunkName: "lesson" */ "./views/Lesson.vue")
-    },
+    // {
+    //   path: "/lesson",
+    //   name: "lesson",
+    //   component: () =>
+    //     import(/* webpackChunkName: "lesson" */ "./views/Lesson.vue")
+    // },
     {
       path: "/typing",
       name: "typing",
       component: () =>
         import(/* webpackChunkName: "typing" */ "./views/Typing.vue")
     },
-    {
-      path: "/signup",
-      name: "signup",
-      component: () =>
-        import(/* webpackChunkName: "signup" */ "./views/Signup.vue")
-    },
+    // {
+    //   path: "/signup",
+    //   name: "signup",
+    //   component: () =>
+    //     import(/* webpackChunkName: "signup" */ "./views/Signup.vue")
+    // },
     {
       path: "/",
-      name: "signin",
+      name: "lesson",
       component: () =>
-        import(/* webpackChunkName: "signin" */ "./views/Signin.vue")
-    },
-    {
-      path: "/signin",
-      name: "signin",
-      component: () =>
-        import(/* webpackChunkName: "signin" */ "./views/Signin.vue")
+        import(/* webpackChunkName: "lesson" */ "./views/Lesson.vue")
     }
+    // {
+    //   path: "/signin",
+    //   name: "signin",
+    //   component: () =>
+    //     import(/* webpackChunkName: "signin" */ "./views/Signin.vue")
+    // }
   ]
 });
 router.beforeEach((to, from, next) => {
