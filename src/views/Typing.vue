@@ -1,9 +1,9 @@
 <template>
   <el-row>
     <sub-header/>
-    <el-col>
+    <el-card>
       <el-button type="success" @click="gameSet">Press Space to start</el-button>
-    </el-col>
+    </el-card>
     <el-col :span="24">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -11,7 +11,7 @@
         </div>
         <el-row class="row-wrapper">
           <el-col :span="8">
-            <span>{{lessonName}}</span>
+            <span>{{language}}</span>
           </el-col>
           <el-col :span="4">
             <span>typeable characters</span>
@@ -33,14 +33,14 @@
           <el-col :span="4">
             <span>{{typStringsLength}}</span>
           </el-col>
-          <el-col :span="4">
-            <span v-bind:class="{correctColor:correctColor}">{{cnt}}</span>
+          <el-col v-bind:class="{correctColor:correctColor}" :span="4">
+            <span>{{correct}}</span>
           </el-col>
-          <el-col :span="4">
-            <span v-bind:class="{correctColor:correctColor}">{{typStringsLength - cnt}}</span>
+          <el-col v-bind:class="{correctColor:correctColor}" :span="4">
+            <span>{{typStringsLength - correct}}</span>
           </el-col>
-          <el-col :span="4">
-            <span v-bind:class="{incorrectColor:incorrectColor}">{{missCount}}</span>
+          <el-col v-bind:class="{incorrectColor:incorrectColor}" :span="4">
+            <span>{{missCount}}</span>
           </el-col>
         </el-row>
       </el-card>
@@ -52,14 +52,14 @@
       </div>
       <el-col :span="24">
         <div class="code">
-          <code v-show="!gameEndFlag">
-            <span
-              v-for="(obj, index) in mappedKeyCodeElement"
-              v-bind:key="index"
-              v-bind:class="{active:index === cnt,return:obj.char === returnChar,typed:index <= cnt - 1 }"
-            >{{obj.char}}</span>
-          </code>
-          <div v-show="gameEndFlag">{{fin}}</div>
+          <pre class="prettyprint"><code v-show="!isGameEnded"><span
+  class="code"
+  v-for="(obj, index) in mappedKeyCodeElement"
+  v-bind:key="index"
+  v-bind:class="{active:index === correct, return:obj.char === returnChar,typed:index <= correct - 1 }"
+>{{obj.char}}</span>
+          </code></pre>
+          <div v-show="isGameEnded">{{fin}}</div>
         </div>
       </el-col>
     </el-col>
@@ -68,6 +68,7 @@
 
 <script>
 import SubHeader from "../components/SubHeader.vue";
+const prettyPrint = require("code-prettify");
 export default {
   name: "Typing",
   components: { SubHeader },
@@ -75,18 +76,16 @@ export default {
     return {
       typStringsLength: this.$store.state.mappedKeyCodeElement.length,
       mappedKeyCodeElement: this.$store.state.mappedKeyCodeElement,
-      lessonName: this.$store.state.lessonName,
-      shiftCheck: 0, //シフトが押された状態かを区別する
-      isGaming: false, //ゲーム中かどうかフラグ
-      gameEndFlag: false, //ゲームを最後までやったかフラグ
+      language: this.$store.state.language,
+      shiftPushed: 0, //シフトが押された状態の場合は1
+      isGaming: false, //ゲーム中はtrue
+      isGameEnded: false, //ゲームを最後までやったらtrue
       typStart: "", //開始時と終了時の時刻を格納
       typEnd: "",
-      cnt: 0, //何文字目かを格納
-      ans: 0, //回答数
-      shiftFlg: [], //問題文字列の文字が大文字か小文字かを区別するためのフラグ
-      missCount: 0, //ミスタイプの数
+      correct: 0, //何文字目まで正解したかを格納
+      missCount: 0, //ミスタイプの数を格納
       fin: "",
-      returnChar: "↲",
+      returnChar: "\n",
 
       correctColor: false,
       incorrectColor: false
@@ -97,6 +96,9 @@ export default {
   },
 
   mounted() {
+    this.$nextTick(function() {
+      prettyPrint.prettyPrint();
+    });
     window.addEventListener("keydown", this.typeGame);
     window.addEventListener("keyup", this.shiftUp);
   },
@@ -105,15 +107,13 @@ export default {
     window.removeEventListener("keyup", this.shiftUp);
   },
   watch: {
-    cnt: function() {
-      console.log("cnt!!!!!!!!!!!!!!!!!!!!!!");
+    correct: function() {
       this.correctColor = !this.correctColor;
       setTimeout(() => {
         this.correctColor = !this.correctColor;
       }, 300);
     },
     missCount: function() {
-      console.log("mis!!!!!!!!!!!!!!!!!!!!!!");
       this.incorrectColor = !this.incorrectColor;
       setTimeout(() => {
         this.incorrectColor = !this.incorrectColor;
@@ -126,15 +126,11 @@ export default {
     },
     shiftUp: function(event) {
       if (event.keyCode == "16") {
-        this.shiftCheck = 0;
-        console.log("shiftcheck:" + this.shiftCheck);
+        this.shiftPushed = 0;
       }
     },
     getInputKeycode: function(event) {
       var inputKeycode; //入力されたキーコードを格納する変数
-
-      //点滅のカウントをクリア
-      // countBlink = 0;
 
       //入力されたキーのキーコードを取得
       if (document.all) {
@@ -143,26 +139,19 @@ export default {
         inputKeycode = event.which;
       }
 
-      //シフトが押されたらshiftCheckを1にする。
+      //シフトが押されたらshiftPushedを1にする。
       if (inputKeycode == "16") {
-        this.shiftCheck = 1;
-        console.log("shiftCheck : " + this.shiftCheck);
+        this.shiftPushed = 1;
       }
       return inputKeycode;
     },
     gameSet: function() {
-      console.log(
-        "============================================gameSet start================================================"
-      );
       document.activeElement.blur();
 
       // ゲーム中になる
-      this.cnt = 0;
-      console.log("cnt Clear!");
+      this.correct = 0;
       this.isGaming = true;
-      console.log("isGaming:" + this.isGaming);
-      this.gameEndFlag = false;
-      console.log("gameEndfgl:" + this.gameEndFlag);
+      this.isGameEnded = false;
       this.missCount = 0;
       this.typStart = new Date();
     },
@@ -172,65 +161,34 @@ export default {
       var inputKeycode = this.getInputKeycode(event);
 
       //スペースが押されたらゲームスタート
-      if (inputKeycode == "32" && !this.isGaming && !this.gameEndFlag) {
+      if (inputKeycode == "32" && !this.isGaming && !this.isGameEnded) {
         this.gameSet();
-        console.log("pushed space");
         // 問題文の一文字目がスペースの場合そのまま正解してしまうのを防ぐ
         return;
       }
       //rが押されたらリスタート
-      if (inputKeycode == "82" && this.gameEndFlag) {
+      if (inputKeycode == "82" && this.isGameEnded) {
         this.gameSet();
-        console.log("pushed r");
         // 問題文の一文字目がrの場合そのまま正解してしまうのを防ぐ
         return;
       }
       //ゲーム中にescが押されたらリスタート
       if (inputKeycode == "27" && this.isGaming) {
         this.gameSet();
-        console.log("pushed esc");
       }
 
-      console.log(
-        "inputKeycode:[" +
-          inputKeycode +
-          "]" +
-          "       shiftCheck:[" +
-          this.shiftCheck +
-          "]" +
-          "       cnt:[" +
-          this.cnt +
-          "]" +
-          "       lesson.keyCode:[" +
-          this.mappedKeyCodeElement[this.cnt].keycode +
-          "]" +
-          "       lesson.shiftCode:[" +
-          this.mappedKeyCodeElement[this.cnt].shiftCode +
-          "]"
-      );
       if (this.isGaming) {
         if (
           //入力されたキーコードと問題文のキーコードを比較
-          inputKeycode == this.mappedKeyCodeElement[this.cnt].keycode &&
-          this.shiftCheck == this.mappedKeyCodeElement[this.cnt].shiftCode
+          inputKeycode == this.mappedKeyCodeElement[this.correct].keycode &&
+          this.shiftPushed == this.mappedKeyCodeElement[this.correct].shiftCode
         ) {
           //キーコードが一致した時の処理
-          console.log("キーコード一致");
-          //最初の1文字が一致したらスタート
-          // if (this.cnt == 0) {
-          //   this.gameSet();
-          // }
-
-          this.cnt++;
-          console.log(
-            "                                                  cnt:[" +
-              this.cnt +
-              "]"
-          );
+          this.correct++;
 
           //全文字入力したか確認
-          if (this.cnt == this.typStringsLength) {
-            //全文字入力していたら、終了時間を記録する
+          if (this.correct == this.typStringsLength) {
+            //全文字入力していたら終了時間を記録する
             this.typEnd = new Date();
 
             //終了時間－開始時間で掛かったミリ秒を取得する
@@ -246,33 +204,12 @@ export default {
             this.fin = "finish ： " + sec + " sec " + msec + " m ";
 
             //ゲーム終了
-            console.log(
-              "=====================================END====================================="
-            );
-            this.gameEndFlag = true;
+            this.isGameEnded = true;
             this.isGaming = false;
-            this.cnt = 0;
-            console.log(
-              "                                        cnt Clear[" +
-                this.cnt +
-                "]"
-            );
-            console.log(
-              "                                        gameEndFlag [" +
-                this.gameEndFlag +
-                "]"
-            );
-            console.log(
-              "                                        isGaming [" +
-                this.isGaming +
-                "]"
-            );
+            this.correct = 0;
           }
-        } else {
-          console.log("キーコードfu一致");
-          //不正解の場合はここにelse
-          if (this.cnt !== 0 && !this.gameEndFlag) this.missCount++;
-          console.log("miss" + this.missCount);
+        } else if ("16" != inputKeycode) {
+          if (this.correct !== 0 && !this.isGameEnded) this.missCount++;
         }
       }
     }
@@ -282,10 +219,16 @@ export default {
 
 <style scoped lang="scss">
 @import "../styles/base";
+
 .code {
-  all: initial;
   text-align: left;
   white-space: pre;
+}
+code {
+  font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
 }
 .active {
   color: #ffffff;
@@ -295,8 +238,8 @@ export default {
 .return {
   margin-right: auto;
 }
-.return:after {
-  content: "\A";
+.return:before {
+  content: "\23CE";
 }
 .correctColor {
   color: #ffffff;
@@ -309,7 +252,8 @@ export default {
   background-color: #e68d8d;
 }
 .typed {
-  color: #ffffff;
-  background-color: #ffffff;
+  opacity: 0.3;
+  // color: #ffffff;
+  // background-color: #ffffff;
 }
 </style>
