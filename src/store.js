@@ -54,7 +54,7 @@ export default new Vuex.Store({
       "7": { id: "", char: "7", keycode: 55, shiftCode: 0 },
       "8": { id: "", char: "8", keycode: 56, shiftCode: 0 },
       "9": { id: "", char: "9", keycode: 57, shiftCode: 0 },
-      "↲": { id: "", char: "↲", keycode: 13, shiftCode: 0 },
+      "\n": { id: "", char: "\n", keycode: 13, shiftCode: 0 },
       A: { id: "", char: "A", keycode: 65, shiftCode: 1 },
       B: { id: "", char: "B", keycode: 66, shiftCode: 1 },
       C: { id: "", char: "C", keycode: 67, shiftCode: 1 },
@@ -122,8 +122,8 @@ export default new Vuex.Store({
         .replace(/&#039;/g, "'")
         .replace(/&#044;/g, ",")
         .replace(/&amp;/g, "&")
-        .replace(/\r\n/g, "↲")
-        .replace(/(\n|\r)/g, "↲")
+        .replace(/\r\n/g, "\n")
+        .replace(/(\n|\r)/g, "\n")
         .replace(/\t/g, "    ");
       // 変換したソースコードとkeycodeの対応付け
       for (let i = 0; i < sourceCode.length; i++) {

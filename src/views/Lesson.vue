@@ -22,7 +22,7 @@
             <el-input
               v-model="sourceCode"
               type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4}"
+              :autosize="{ minRows: 2, maxRows: 4 }"
               placeholder="New code..."
               clearable
             ></el-input>
@@ -41,10 +41,10 @@
           <span>lessons</span>
         </div>
 
-        <el-table :data="lessons" style="width: 100%">
+        <el-table v-on:expand-change="coloring" :data="lessons" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="props">
-              <pre v-highlightjs><code>{{props.row.sourceCode}}</code></pre>
+              <pre class="prettyprint"><code>{{props.row.sourceCode}}</code></pre>
             </template>
           </el-table-column>
           <el-table-column prop="language" label="language"></el-table-column>
@@ -54,7 +54,7 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="startLesson(scope.row.language,scope.row.sourceCode)"
+                @click="startLesson(scope.row.language, scope.row.sourceCode)"
               >lesson</el-button>
             </template>
           </el-table-column>
@@ -84,23 +84,21 @@ export default {
   created() {
     this.refresh();
   },
-  mounted() {
-    var vm = this;
-    this.$nextTick(function() {
-      prettyPrint.prettyPrint();
-    });
-  },
   methods: {
-    refresh: function() {
+    coloring: function() {
+      setTimeout(() => {
+        prettyPrint.prettyPrint();
+      }, 1);
+    },
+    refresh: async function() {
       let _this = this;
-      this.database.ref("lessons").on("value", snapshot => {
-        this.lessons = [];
-        Object.keys(snapshot.val()).forEach(function(key) {
-          _this.lessons.push({
-            lessonId: key,
-            language: snapshot.val()[key].lessonName,
-            sourceCode: snapshot.val()[key].sourceCode
-          });
+      let snapshot = await this.database.ref("lessons").once("value");
+      this.lessons = [];
+      Object.keys(snapshot.val()).forEach(function(key) {
+        _this.lessons.push({
+          lessonId: key,
+          language: snapshot.val()[key].lessonName,
+          sourceCode: snapshot.val()[key].sourceCode
         });
       });
     },

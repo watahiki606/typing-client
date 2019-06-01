@@ -85,7 +85,7 @@ export default {
       correct: 0, //何文字目まで正解したかを格納
       missCount: 0, //ミスタイプの数を格納
       fin: "",
-      returnChar: "↲",
+      returnChar: "\n",
 
       correctColor: false,
       incorrectColor: false
@@ -96,7 +96,6 @@ export default {
   },
 
   mounted() {
-    var vm = this;
     this.$nextTick(function() {
       prettyPrint.prettyPrint();
     });
@@ -239,8 +238,8 @@ code {
 .return {
   margin-right: auto;
 }
-.return:after {
-  content: "\A";
+.return:before {
+  content: "\23CE";
 }
 .correctColor {
   color: #ffffff;
