@@ -28,7 +28,7 @@
         </el-row>
         <el-row class="row-wrapper score">
           <el-col :span="8">
-            <span>01:01:00</span>
+            <span>{{stopWatch}}</span>
           </el-col>
           <el-col :span="4">
             <span>{{typStringsLength}}</span>
@@ -80,13 +80,15 @@ export default {
       shiftPushed: 0, //シフトが押された状態の場合は1
       isGaming: false, //ゲーム中はtrue
       isGameEnded: false, //ゲームを最後までやったらtrue
-      typStart: "", //開始時と終了時の時刻を格納
-      typEnd: "",
+      typStart: 0, //開始時と終了時の時刻を格納
+      typEnd: 0,
+      stopWatchID: undefined,
       correct: 0, //何文字目まで正解したかを格納
       missCount: 0, //ミスタイプの数を格納
       fin: "",
       returnChar: "\n",
-
+      keika: 0,
+      stopWatch: "00:00:000",
       correctColor: false,
       incorrectColor: false
     };
@@ -129,6 +131,28 @@ export default {
         this.shiftPushed = 0;
       }
     },
+    time: function() {
+      const self = this;
+      this.typStart = Date.now();
+      let count = function() {
+        let duration = Date.now() - self.typStart;
+        let min = Math.floor(duration / 60000);
+        let sec = Math.floor((duration % 60000) / 1000);
+        let msec = duration % 1000;
+
+        min = ("0" + min).slice(-2);
+        sec = ("0" + sec).slice(-2);
+        msec = ("00" + msec).slice(-3);
+        self.stopWatch = min + ":" + sec + "." + msec;
+      };
+      if (this.stopWatchID) {
+        clearInterval(this.stopWatchID);
+        this.stopWatch = "00:00:000";
+      }
+      if (this.isGaming) {
+        this.stopWatchID = setInterval(count, 10);
+      }
+    },
     getInputKeycode: function(event) {
       var inputKeycode; //入力されたキーコードを格納する変数
 
@@ -147,13 +171,11 @@ export default {
     },
     gameSet: function() {
       document.activeElement.blur();
-
+      this.time();
       // ゲーム中になる
       this.correct = 0;
-      this.isGaming = true;
       this.isGameEnded = false;
       this.missCount = 0;
-      this.typStart = new Date();
     },
 
     //キー入力を受け取る関数
@@ -162,6 +184,7 @@ export default {
 
       //スペースが押されたらゲームスタート
       if (inputKeycode == "32" && !this.isGaming && !this.isGameEnded) {
+        this.isGaming = true;
         this.gameSet();
         // 問題文の一文字目がスペースの場合そのまま正解してしまうのを防ぐ
         return;
@@ -174,6 +197,7 @@ export default {
       }
       //ゲーム中にescが押されたらリスタート
       if (inputKeycode == "27" && this.isGaming) {
+        this.isGaming = false;
         this.gameSet();
       }
 
@@ -192,16 +216,16 @@ export default {
             this.typEnd = new Date();
 
             //終了時間－開始時間で掛かったミリ秒を取得する
-            var keika = this.typEnd - this.typStart;
+            this.keika = this.typEnd - this.typStart;
 
             //1000で割って「切捨て」、秒数を取得
-            var sec = Math.floor(keika / 1000);
+            this.sec = Math.floor(this.keika / 1000);
 
             //1000で割った「余り(%で取得できる）」でミリ秒を取得
-            var msec = keika % 1000;
+            this.msec = this.keika % 1000;
 
             //問題終了を告げる文字列を作成し表示
-            this.fin = "finish ： " + sec + " sec " + msec + " m ";
+            this.fin = "finish ： " + this.sec + " sec " + this.msec + " m ";
 
             //ゲーム終了
             this.isGameEnded = true;
@@ -253,7 +277,5 @@ code {
 }
 .typed {
   opacity: 0.3;
-  // color: #ffffff;
-  // background-color: #ffffff;
 }
 </style>
