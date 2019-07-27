@@ -2,7 +2,7 @@
   <el-row>
     <sub-header/>
     <el-card>
-      <el-button type="success" @click="gameSet">Press Space to start</el-button>
+      <el-button type="success" v-bind:class="{isGaming:isGaming}">Press Space to start</el-button>
     </el-card>
     <el-col :span="24">
       <el-card class="box-card">
@@ -277,5 +277,8 @@ code {
 }
 .typed {
   opacity: 0.3;
+}
+.isGaming {
+  background-color: #71e2b3;
 }
 </style>
