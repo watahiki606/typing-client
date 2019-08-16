@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <sub-header/>
+    <sub-header />
     <el-card>
       <el-button type="success" v-bind:class="{isGaming:isGaming}">Press Space to start</el-button>
     </el-card>
@@ -52,13 +52,14 @@
       </div>
       <el-col :span="24">
         <div class="code">
-          <pre class="prettyprint"><code v-show="!isGameEnded"><span
+          <pre v-show="!isGameEnded" class="prettyprint"><code><span
   class="code"
   v-for="(obj, index) in mappedKeyCodeElement"
   v-bind:key="index"
   v-bind:class="{active:index === correct, return:obj.char === returnChar,typed:index <= correct - 1 }"
 >{{obj.char}}</span>
-          </code></pre>
+          </code>
+          </pre>
           <div v-show="isGameEnded">{{fin}}</div>
         </div>
       </el-col>
@@ -212,25 +213,14 @@ export default {
 
           //全文字入力したか確認
           if (this.correct == this.typStringsLength) {
-            //全文字入力していたら終了時間を記録する
-            this.typEnd = new Date();
-
-            //終了時間－開始時間で掛かったミリ秒を取得する
-            this.keika = this.typEnd - this.typStart;
-
-            //1000で割って「切捨て」、秒数を取得
-            this.sec = Math.floor(this.keika / 1000);
-
-            //1000で割った「余り(%で取得できる）」でミリ秒を取得
-            this.msec = this.keika % 1000;
-
             //問題終了を告げる文字列を作成し表示
-            this.fin = "finish ： " + this.sec + " sec " + this.msec + " m ";
-
+            this.fin = this.stopWatch;
             //ゲーム終了
             this.isGameEnded = true;
             this.isGaming = false;
             this.correct = 0;
+            clearInterval(this.stopWatchID);
+            this.stopWatch = "00:00:000";
           }
         } else if ("16" != inputKeycode) {
           if (this.correct !== 0 && !this.isGameEnded) this.missCount++;
