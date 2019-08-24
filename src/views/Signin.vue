@@ -2,10 +2,10 @@
   <div class="signin">
     <h2>Sign in</h2>
     <div class="input-form-wrapper">
-      <el-input type="text" placeholder="Username" v-model="username"/>
+      <el-input type="text" placeholder="Username" v-model="username" />
     </div>
     <div class="input-form-wrapper">
-      <el-input type="password" placeholder="Password" v-model="password"/>
+      <el-input type="password" placeholder="Password" v-model="password" />
     </div>
     <el-button @click="signIn">Signin</el-button>
     <p>
@@ -31,8 +31,6 @@ export default {
         await firebase
           .auth()
           .signInWithEmailAndPassword(this.username, this.password);
-        const token = await firebase.auth().currentUser.getIdToken(true);
-        localStorage.setItem("token", token);
         this.$router.push("/lesson");
       } catch (error) {
         this.$message({
