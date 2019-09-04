@@ -1,10 +1,24 @@
 <template>
   <el-container id="app">
+    <el-row>
+      <el-col :span="24">
+        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+          <el-menu-item index="1">
+            <a href="/lesson">lessons</a>
+          </el-menu-item>
+
+          <el-menu-item index="4">
+            <a href="/" target="_blank">Sgin in</a>
+          </el-menu-item>
+        </el-menu>
+      </el-col>
+    </el-row>
+
     <el-header id="nav">
-      <global-header/>
+      <global-header />
     </el-header>
     <el-main>
-      <router-view/>
+      <router-view />
     </el-main>
   </el-container>
 </template>
@@ -14,6 +28,17 @@ import GlobalHeader from "./components/GlobalHeader.vue";
 export default {
   components: {
     GlobalHeader
+  },
+  data() {
+    return {
+      activeIndex: "1",
+      activeIndex2: "1"
+    };
+  },
+  methods: {
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+    }
   }
 };
 </script>

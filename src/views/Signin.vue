@@ -1,29 +1,33 @@
 <template>
   <div class="signin">
     <h2>Sign in</h2>
-    <div class="input-form-wrapper">
-      <el-input type="text" placeholder="Username" v-model="username" />
-    </div>
-    <div class="input-form-wrapper">
-      <el-input type="password" placeholder="Password" v-model="password" />
-    </div>
-    <el-button @click="signIn">Signin</el-button>
-    <p>
-      You don't have an account?
-      <router-link to="/signup">create account now!!</router-link>
-    </p>
+
+    <div id="firebaseui-auth-container"></div>
   </div>
 </template>
 
 <script>
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import firebaseui from "firebaseui-ja";
+import "firebaseui-ja/dist/firebaseui.css";
 export default {
   name: "Signin",
   data() {
     return {
       username: "",
-      password: ""
+      password: "",
+      uiConfig: {
+        signInSuccessUrl: "/lesson",
+        signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID]
+      }
     };
+  },
+  mounted() {
+    var vm = this;
+
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    ui.start("#firebaseui-auth-container", this.uiConfig);
   },
   methods: {
     signIn: async function() {

@@ -9,12 +9,12 @@ let router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
-    {
-      path: "/",
-      name: "home",
-      component: Home,
-      meta: { requiresAuth: true }
-    },
+    // {
+    //   path: "/",
+    //   name: "home",
+    //   component: Home,
+    //   meta: { requiresAuth: true }
+    // },
     {
       path: "/about",
       name: "about",
@@ -45,7 +45,7 @@ let router = new Router({
       meta: { requiresAuth: true }
     },
     {
-      path: "/signin",
+      path: "/",
       name: "signin",
       component: () =>
         import(/* webpackChunkName: "signin" */ "./views/Signin.vue")
@@ -60,7 +60,7 @@ router.beforeEach((to, from, next) => {
         next();
       } else {
         next({
-          path: "/signin",
+          path: "/",
           query: { redirect: to.fullPath }
         });
       }

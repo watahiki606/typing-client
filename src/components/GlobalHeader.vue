@@ -1,6 +1,10 @@
 <template>
   <div class="global-header">
-    <span class="global-header-label">Welcome to Shakyo Application!</span>
+    <el-row>
+      <el-col :span="24">
+        <span class="global-header-label">Welcome to Shakyo Application!</span>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -12,9 +16,9 @@ export default {
 
 <style scoped lang="scss">
 @import "../styles/colors";
+
 .global-header {
   background-color: $HEADER_BACKGROUND;
-  height: 6.5vh;
 }
 .global-header-label {
   color: $HEADER_LABEL;

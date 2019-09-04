@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <sub-header/>
+    <sub-header />
     <el-col :span="24">
       <el-card class="box-card box-card-wrapper">
         <div slot="header">
@@ -68,6 +68,7 @@
 /* eslint-disable no-console */
 import SubHeader from "../components/SubHeader.vue";
 import firebase from "firebase";
+
 const prettyPrint = require("code-prettify");
 export default {
   name: "Lesson",
@@ -78,11 +79,33 @@ export default {
       database: firebase.database(),
       lessonId: undefined,
       language: undefined,
-      sourceCode: undefined
+      sourceCode: undefined,
+      actionCodeSettings: {
+        url: "/lesson"
+      }
     };
   },
   created() {
     this.refresh();
+    firebase.auth().onAuthStateChanged(user => {
+      console.log(user);
+      if (user === null) {
+        console.log("ログインしていません");
+        return false;
+      }
+      if (user.emailVerified) {
+        console.log(user.displayName + "さんがログインしました");
+      } else {
+        user
+          .sendEmailVerification(this.actionCodeSettings)
+          .then(() => {
+            console.log("メール送信しました");
+          })
+          .catch(error => {
+            console.log("メール送信できませんでした:" + error);
+          });
+      }
+    });
   },
   methods: {
     coloring: function() {
