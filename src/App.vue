@@ -1,19 +1,5 @@
 <template>
   <el-container id="app">
-    <el-row>
-      <el-col :span="24">
-        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-          <el-menu-item index="1">
-            <a href="/lesson">lessons</a>
-          </el-menu-item>
-
-          <el-menu-item index="4">
-            <a href="/" target="_blank">Sgin in</a>
-          </el-menu-item>
-        </el-menu>
-      </el-col>
-    </el-row>
-
     <el-header id="nav">
       <global-header />
     </el-header>
@@ -31,13 +17,12 @@ export default {
   },
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      activeIndex: "1"
     };
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    push: function(path) {
+      this.$router.push(path);
     }
   }
 };

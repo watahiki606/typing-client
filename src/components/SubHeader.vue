@@ -12,7 +12,7 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.$router.push("/signin");
+          this.$router.push("/");
         });
     }
   }

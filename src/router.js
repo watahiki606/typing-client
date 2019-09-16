@@ -16,7 +16,7 @@ let router = new Router({
     //   meta: { requiresAuth: true }
     // },
     {
-      path: "/about",
+      path: "/",
       name: "about",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
@@ -28,8 +28,8 @@ let router = new Router({
       path: "/typing",
       name: "typing",
       component: () =>
-        import(/* webpackChunkName: "typing" */ "./views/Typing.vue"),
-      meta: { requiresAuth: true }
+        import(/* webpackChunkName: "typing" */ "./views/Typing.vue")
+      // meta: { requiresAuth: true }
     },
     {
       path: "/signup",
@@ -41,11 +41,11 @@ let router = new Router({
       path: "/lesson",
       name: "lesson",
       component: () =>
-        import(/* webpackChunkName: "lesson" */ "./views/Lesson.vue"),
-      meta: { requiresAuth: true }
+        import(/* webpackChunkName: "lesson" */ "./views/Lesson.vue")
+      // meta: { requiresAuth: true }
     },
     {
-      path: "/",
+      path: "/signin",
       name: "signin",
       component: () =>
         import(/* webpackChunkName: "signin" */ "./views/Signin.vue")
