@@ -1,16 +1,18 @@
 <template>
   <div class="about">
-    <div class="global-header">
-      <el-row>
-        <el-col :span="24">
-          <span class="global-header-label">Welcome to Shakyo Application!</span>
-        </el-col>
-      </el-row>
-    </div>
-    <h1>Typing Practice for Programmers</h1>
-    <div class="block">
-      <el-image :src="src"></el-image>
-    </div>
+    <el-row class="global-header">
+      <el-col :span="24">
+        <span class="global-header-label">Welcome to Shakyo Application!</span>
+      </el-col>
+    </el-row>
+    <el-row>
+      <h1>Typing Practice for Programmers</h1>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="6" :offset="9">
+        <el-image :src="src"></el-image>
+      </el-col>
+    </el-row>
 
     <el-row>
       <el-button size="lerge" type="primary" @click="gotoLessons()">Sign In</el-button>
