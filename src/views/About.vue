@@ -15,7 +15,7 @@
     </el-row>
 
     <el-row>
-      <el-button size="lerge" type="primary" @click="gotoLessons()">Sign In</el-button>
+      <el-button size="lerge" type="primary" @click="push('/signin')">Sign In</el-button>
     </el-row>
   </div>
 </template>
@@ -32,8 +32,8 @@ export default {
 
   mounted() {},
   methods: {
-    gotoLessons: function() {
-      this.$router.push("/lesson");
+    push: function(path) {
+      this.$router.push(path);
     }
   }
 };

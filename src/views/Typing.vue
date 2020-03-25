@@ -2,7 +2,7 @@
   <el-row>
     <sub-header />
     <el-card>
-      <el-button type="success" v-bind:class="{isGaming:isGaming}">Press Space to start</el-button>
+      <el-button type="success" v-bind:class="{ isGaming: isGaming }">Press Space to start</el-button>
     </el-card>
     <el-col :span="24">
       <el-card class="box-card">
@@ -11,7 +11,7 @@
         </div>
         <el-row class="row-wrapper">
           <el-col :span="8">
-            <span>{{language}}</span>
+            <span>{{ language }}</span>
           </el-col>
           <el-col :span="4">
             <span>typeable characters</span>
@@ -28,19 +28,19 @@
         </el-row>
         <el-row class="row-wrapper score">
           <el-col :span="8">
-            <span>{{stopWatch}}</span>
+            <span>{{ stopWatch }}</span>
           </el-col>
           <el-col :span="4">
-            <span>{{typStringsLength}}</span>
+            <span>{{ typStringsLength }}</span>
           </el-col>
-          <el-col v-bind:class="{correctColor:correctColor}" :span="4">
-            <span>{{correct}}</span>
+          <el-col v-bind:class="{ correctColor: correctColor }" :span="4">
+            <span>{{ correct }}</span>
           </el-col>
-          <el-col v-bind:class="{correctColor:correctColor}" :span="4">
-            <span>{{typStringsLength - correct}}</span>
+          <el-col v-bind:class="{ correctColor: correctColor }" :span="4">
+            <span>{{ typStringsLength - correct }}</span>
           </el-col>
-          <el-col v-bind:class="{incorrectColor:incorrectColor}" :span="4">
-            <span>{{missCount}}</span>
+          <el-col v-bind:class="{ incorrectColor: incorrectColor }" :span="4">
+            <span>{{ missCount }}</span>
           </el-col>
         </el-row>
       </el-card>
@@ -60,7 +60,7 @@
 >{{obj.char}}</span>
           </code>
           </pre>
-          <div v-show="isGameEnded">{{fin}}</div>
+          <div v-show="isGameEnded">{{ fin }}</div>
         </div>
       </el-col>
     </el-col>
